@@ -15,6 +15,7 @@ pipelinerunner:
   args:
   - controller
   - pipelinerunner
+  - --use-meta-pipeline=false
 tillerNamespace: ""
 
 sinker:
