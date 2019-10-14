@@ -6,13 +6,22 @@ pipelineConfig:
         agent:
           image: gcr.io/jenkinsxio/builder-go
         stages:
-        - name: pr
+        - name: pr-checks
           steps:
+          - args:
+            - step
+            - verify
+            - values
+            - --values-file=parameters.yaml
+            - --schema-file=parameters.tmp.schema.json
+            command: jx
+            dir: /workspace/source/env
+            name: verify-parameters
           - args:
             - build
             command: make
             dir: /workspace/source/env
-            name: helm-build
+            name: lint-env-helm
     release:
       pipeline:
         agent:
@@ -20,6 +29,10 @@ pipelineConfig:
         environment:
         - name: DEPLOY_NAMESPACE
           value: jx
+        - name: GIT_AUTHOR_NAME
+          value: ccojocar-bot
+        - name: GIT_AUTHOR_EMAIL
+          value: jx-bot@gmx.ch
         stages:
         - name: release
           steps:
@@ -86,7 +99,7 @@ pipelineConfig:
             env:
             - name: DEPLOY_NAMESPACE
               value: kube-system
-            name: install-nginx
+            name: install-nginx-controller
           - args:
             - step
             - create
@@ -162,7 +175,7 @@ pipelineConfig:
             - parameters
             command: jx
             dir: /workspace/source/env
-            name: helm-populate-params
+            name: create-helm-values
           - args:
             - step
             - helm
@@ -175,14 +188,14 @@ pipelineConfig:
             - ../kubeProviders
             command: jx
             dir: /workspace/source/env
-            name: install-env
+            name: install-jenkins-x
           - args:
             - step
             - verify
             - env
             command: jx
             dir: /workspace/source
-            name: verify-env
+            name: verify-jenkins-x-environment
           - args:
             - ""
             - ""
@@ -191,7 +204,7 @@ pipelineConfig:
             - ""
             command: echo
             dir: /workspace/source/repositories
-            name: log-repos
+            name: print-repositories
           - args:
             - step
             - helm
@@ -201,7 +214,7 @@ pipelineConfig:
             - repos
             command: jx
             dir: /workspace/source/repositories
-            name: apply-repositories
+            name: install-repositories
           - args:
             - step
             - scheduler
@@ -210,7 +223,7 @@ pipelineConfig:
             - --direct=true
             command: jx
             dir: /workspace/source/prowConfig
-            name: apply-pipeline-schedulers
+            name: install-pipelines
           - args:
             - update
             - webhooks
@@ -227,4 +240,4 @@ pipelineConfig:
             - 30m
             command: jx
             dir: /workspace/source/env
-            name: verify-install
+            name: verify-installation
