@@ -29,12 +29,12 @@ pipelineConfig:
         environment:
         - name: DEPLOY_NAMESPACE
           value: jx
+        - name: BASE_CONFIG_REF
+          value: 07848ff
         - name: GIT_AUTHOR_NAME
           value: ccojocar-bot
         - name: GIT_AUTHOR_EMAIL
           value: jx-bot@gmx.ch
-        - name: BASE_CONFIG_REF
-          value: 07848ff
         stages:
         - name: release
           steps:
