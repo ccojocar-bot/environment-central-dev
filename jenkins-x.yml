@@ -192,13 +192,6 @@ pipelineConfig:
             dir: /workspace/source/env
             name: install-jenkins-x
           - args:
-            - step
-            - verify
-            - env
-            command: jx
-            dir: /workspace/source
-            name: verify-jenkins-x-environment
-          - args:
             - ""
             - ""
             - now populating projects....
